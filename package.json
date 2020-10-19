@@ -1,0 +1,12 @@
+{
+  "name": "dnd-character-sheet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist\\Index.js",
+  "scripts": {
+    "run": "node .",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC"
+}

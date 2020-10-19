@@ -1,0 +1,3 @@
+class AbilityManager {
+    strengh: number;
+}
