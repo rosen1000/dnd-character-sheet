@@ -1,13 +1,14 @@
+import { Class, Race } from "./@types";
 import { AbilityStat } from "./AbilityStat";
 
 export class Character {
     public readonly id: string;
     public name: string;
 
-    public class: string;
-    public level: number;
+    public class: Class;
+    private _level: number;
     public background: string;
-    public race: string;
+    public race: Race | string;
 
     // Combat Stats
     public armorClass: number;
@@ -47,4 +48,11 @@ export class Character {
     public ideals: string;
     public bonds: string;
     public flaws: string;
+
+    public get level() {
+        return this._level;
+    }
+    public set level(value) {
+        if (value >= 0) this._level = value;
+    }
 }
