@@ -1,12 +1,16 @@
 import { Character } from "./Character";
+import { generate } from "./Generate";
 
 const me = new Character();
 me.name = "Shumizu";
+me.playerName = "rosen1000";
 
 me.class = "Warlock";
 me.level = 3;
 me.background = "Acolyte";
 me.race = "Fire Genasi";
+me.alignment = "Chaotic Evil";
+me.xp = 0;
 
 me.stats.strength.value = 9;
 me.stats.dexterity.value = 10;
@@ -66,4 +70,6 @@ me.spells.push("Crown of Madness"); // Spells lvl2
 me.spells.push("Remove Curse") // Spells lvl3
 me.spellSlots = 2;
 
-console.log(me);
+generate(me);
+
+// console.log(me);

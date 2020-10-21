@@ -5,8 +5,18 @@
   "main": "dist\\Index.js",
   "scripts": {
     "run": "node .",
-    "build": "tsc"
+    "build": "tsc",
+    "build-and-run": "tsc && node .",
+    "clean-linux": "rm dist -r",
+    "clean-windows": "del dist /q"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@jimp/png": "^0.16.1",
+    "jimp": "^0.16.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.0"
+  }
 }
