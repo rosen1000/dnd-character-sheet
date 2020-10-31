@@ -1,5 +1,4 @@
 import { Class, Race } from "./@types";
-import { AbilityStat } from "./AbilityStat";
 
 export class Character {
     public readonly id: string;
@@ -50,12 +49,81 @@ export class Character {
 
     // Ability Stats
     public stats = new (class {
-        strength = new AbilityStat();
-        dexterity = new AbilityStat();
-        constitution = new AbilityStat();
-        intelligence = new AbilityStat();
-        wisdom = new AbilityStat();
-        charisma = new AbilityStat();
+        private str: number;
+        private dex: number;
+        private con: number;
+        private int: number;
+        private wis: number;
+        private cha: number;
+
+        public get strength(): number {
+            return this.str;
+        }
+
+        public get dexterity(): number {
+            return this.dex;
+        }
+
+        public get constitution(): number {
+            return this.con;
+        }
+
+        public get intelligence(): number {
+            return this.int;
+        }
+
+        public get wisdom(): number {
+            return this.wis;
+        }
+
+        public get charisma(): number {
+            return this.cha;
+        }
+
+        public set strength(v: number) {
+            if (v < 1) this.str = 1;
+            else if (v > 30) this.str = 30;
+            else this.str = v;
+        }
+
+        public set dexterity(v: number) {
+            if (v < 1) this.dex = 1;
+            else if (v > 30) this.dex = 30;
+            else this.dex = v;
+        }
+
+        public set constitution(v: number) {
+            if (v < 1) this.con = 1;
+            else if (v > 30) this.con = 30;
+            else this.con = v;
+        }
+
+        public set intelligence(v: number) {
+            if (v < 1) this.int = 1;
+            else if (v > 30) this.int = 30;
+            else this.int = v;
+        }
+
+        public set wisdom(v: number) {
+            if (v < 1) this.wis = 1;
+            else if (v > 30) this.wis = 30;
+            else this.wis = v;
+        }
+
+        public set charisma(v: number) {
+            if (v < 1) this.cha = 1;
+            else if (v > 30) this.cha = 30;
+            else this.cha = v;
+        }
+
+        public mod(type: "str" | "dex" | "con" | "int" | "wis" | "cha") {
+            return Math.floor(this[type] / 2) - 5;
+        }
+
+        public modString(type: "str" | "dex" | "con" | "int" | "wis" | "cha") {
+            let mod = this.mod(type);
+            return mod > 0 ? "+" + mod : "" + mod;
+        }
     })();
 
     // Other Stats

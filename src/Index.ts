@@ -12,12 +12,12 @@ me.race = "Fire Genasi";
 me.alignment = "Chaotic Evil";
 me.xp = 0;
 
-me.stats.strength.value = 9;
-me.stats.dexterity.value = 10;
-me.stats.constitution.value = 12 + 2;
-me.stats.intelligence.value = 13 + 1;
-me.stats.wisdom.value = 14;
-me.stats.charisma.value = 15;
+me.stats.strength = 9;
+me.stats.dexterity = 10;
+me.stats.constitution = 12 + 2;
+me.stats.intelligence = 13 + 1;
+me.stats.wisdom = 14;
+me.stats.charisma = 15;
 
 // If you save with ability add the proficiency to the modifier
 // If Dexterity mod is +3 and proficiency mod is +2, your save is +5
@@ -50,12 +50,12 @@ me.equipment = [
     "Two daggers"
 ];
 
-me.armorClass = 10 + me.stats.dexterity.mod;
-me.initiative = me.stats.dexterity.mod;
+me.armorClass = 10 + me.stats.mod("dex");
+me.initiative = me.stats.mod("dex");
 me.speed = 30;
 me.hitDice.times = 3; // 3d8
 me.hitDice.value = 8
-me.maxHp = 8 + me.stats.constitution.value;
+me.maxHp = 8 + me.stats.constitution;
 me.hp = me.maxHp;
 me.tempHp = 0;
 
