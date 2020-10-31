@@ -20,22 +20,43 @@ export class Character {
     public speed: number;
     public hp: number;
     public maxHp: number;
-    public hitDice: number;
-    public saves = {
-        successes: 0,
-        failures: 0,
-    };
+    public hitDice = new (class HitDice {
+        public value: number;
+        public times = 1;
+        toString() {
+            if (this.value == undefined) return "Value is undefined on hit dice";
+            return (this.times > 1 ? this.times : "") + "d" + this.value;
+        }
+    })();
+    public saves = new (class SaveManager {
+        private succ = 0;
+        private fail = 0;
+        get successes(): number {
+            return this.succ;
+        }
+        set successes(v: number) {
+            if (v > 3) this.succ = 3;
+            else this.succ = v;
+        }
+        get failures(): number {
+            return this.fail;
+        }
+        set failures(v: number) {
+            if (v > 3) this.fail = 3;
+            else this.fail = v;
+        }
+    })();
     public tempHp: number;
 
     // Ability Stats
-    public stats = {
-        strength: new AbilityStat(),
-        dexterity: new AbilityStat(),
-        constitution: new AbilityStat(),
-        intelligence: new AbilityStat(),
-        wisdom: new AbilityStat(),
-        charisma: new AbilityStat(),
-    };
+    public stats = new (class {
+        strength = new AbilityStat();
+        dexterity = new AbilityStat();
+        constitution = new AbilityStat();
+        intelligence = new AbilityStat();
+        wisdom = new AbilityStat();
+        charisma = new AbilityStat();
+    })();
 
     // Other Stats
     public inspiration: boolean = false;
@@ -67,8 +88,8 @@ export class Character {
 
     // Spell handling
     public spellAbility: number;
-    public spellSaveDC:number;
-    public spellBonus:number;
+    public spellSaveDC: number;
+    public spellBonus: number;
     public spells: Array<string>;
     public spellSlots: number;
 

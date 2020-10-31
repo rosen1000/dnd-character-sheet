@@ -1,6 +1,7 @@
 import * as jimp from "jimp";
 import { Character } from "./Character";
 import { join } from "path";
+import Jimp = require("jimp");
 
 export function generate(character: Character) {
     jimp.read(join(__dirname, "..", "template.png"), async (_, image) => {
@@ -148,6 +149,10 @@ export function generate(character: Character) {
         );
         height += 176;
 
+        // Saving Throws
+        let square = new jimp(40, 40, "black").scale(0.5).rotate(45);
+        image.composite(square, 10, 10);
+
         // Passive wisdom
         image.print(
             font,
@@ -165,8 +170,28 @@ export function generate(character: Character) {
         // TODO: Center better the images or use 430x430
         let avatar = await jimp.read(join(__dirname, "..", "avatar.png"));
         avatar.crop(avatar.getWidth() / 8, 40, 435, 460);
-        // avatar.resize(435, 460);
         image.composite(avatar, 570, 325);
+
+        // HP Stats
+        image.print(
+            font,
+            865 - jimp.measureText(font, character.maxHp.toString()) / 2,
+            833,
+            character.maxHp
+        );
+        image.print(
+            fontTitle,
+            680 - jimp.measureText(fontTitle, character.hitDice.toString()) / 2,
+            1010,
+            character.hitDice.toString()
+        );
+        let saveCircle = new jimp(30, 30, "black").circle({ radius: 11.5, x: 15, y: 15 });
+        for (let i = 0; i < (character.saves.successes > 3 ? 3 : character.saves.successes); i++) {
+            image.composite(saveCircle, 889 + 33 * i, 990);
+        }
+        for (let i = 0; i < (character.saves.failures > 3 ? 3 : character.saves.failures); i++) {
+            image.composite(saveCircle, 889.5 + 33 * i, 1029);
+        }
 
         image.normalize();
         image.write("out.png");
