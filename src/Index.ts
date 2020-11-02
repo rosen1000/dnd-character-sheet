@@ -64,6 +64,7 @@ me.ideals = "Charity. I always try to help those in need, no matter what the per
 me.bonds = "I seek to preserve a sacred text that my enemies consider heretical and seek to destroy.";
 me.flaws = "Once I pick a goal, I become obsessed with it to the detriment of everything else in my life.";
 
+// TODO: Why proficiency is 2
 me.proficiency = 2;
 me.spells = ["Eldritch Blast", "Infestation"]; // Cantrip
 me.spells.push("Hex", "Toll the Dead"); // Spells lvl1

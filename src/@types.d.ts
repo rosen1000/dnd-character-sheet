@@ -65,3 +65,9 @@ export type Background =
     | "Uthgardt Tribe Member"
     | "Volstrucker Agent"
     | "Waterdhavian Noble";
+
+export type StatShort = "str" | "dex" | "con" | "int" | "wis" | "cha";
+
+export class GenerateSettings {
+
+}

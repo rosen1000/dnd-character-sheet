@@ -1,4 +1,4 @@
-import { Class, Race } from "./@types";
+import { Class, Race, StatShort } from "./@types";
 
 export class Character {
     public readonly id: string;
@@ -8,6 +8,12 @@ export class Character {
     // Basic Info
     public class: Class;
     private _level: number;
+    public get level() {
+        return this._level;
+    }
+    public set level(value) {
+        if (value >= 0) this._level = value;
+    }
     public background: string;
     public race: Race | string;
     public alignment: string;
@@ -116,11 +122,11 @@ export class Character {
             else this.cha = v;
         }
 
-        public mod(type: "str" | "dex" | "con" | "int" | "wis" | "cha") {
+        public mod(type: StatShort) {
             return Math.floor(this[type] / 2) - 5;
         }
 
-        public modString(type: "str" | "dex" | "con" | "int" | "wis" | "cha") {
+        public modString(type: StatShort) {
             let mod = this.mod(type);
             return mod > 0 ? "+" + mod : "" + mod;
         }
@@ -156,15 +162,12 @@ export class Character {
 
     // Spell handling
     public spellAbility: number;
-    public spellSaveDC: number;
-    public spellBonus: number;
+    public get spellSaveDC(): number {
+        return 8 + this.proficiency + this.stats.mod("int");
+    };
+    public get spellBonus(): number {
+        return this.proficiency + this.stats.mod("int");
+    };
     public spells: Array<string>;
     public spellSlots: number;
-
-    public get level() {
-        return this._level;
-    }
-    public set level(value) {
-        if (value >= 0) this._level = value;
-    }
 }

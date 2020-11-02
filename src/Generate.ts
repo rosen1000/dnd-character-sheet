@@ -2,8 +2,9 @@ import * as jimp from "jimp";
 import { Character } from "./Character";
 import { join } from "path";
 import Jimp = require("jimp");
+import { GenerateSettings, StatShort } from "./@types";
 
-export function generate(character: Character) {
+export function generate(character: Character, settings: GenerateSettings = {}) {
     jimp.read(join(__dirname, "..", "template.png"), async (_, image) => {
         const fontTitle = await jimp.loadFont(jimp.FONT_SANS_64_BLACK);
         const font = await jimp.loadFont(jimp.FONT_SANS_32_BLACK);
@@ -151,6 +152,7 @@ export function generate(character: Character) {
 
         // Skills
         let saves = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+        let savesShort: Array<StatShort> = ["str", "dex", "con", "int", "wis", "cha"];
         let skills = [
             ["Athletics"],
             ["Acrobatics", "Sleigth of Hand", "Stealth"],
@@ -163,26 +165,43 @@ export function generate(character: Character) {
         let tabSize = 650.5 - saveThrow[1];
         let circleSize = 499 - saveThrow[1];
         for (let i = 0; i < 6; i++) {
+            image.print(
+                fontSmall,
+                saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
+                saveThrow[1] + tabSize * i + 6,
+                character.stats.mod(savesShort[i]) > 0
+                    ? "+" + (character.stats.mod(savesShort[i]) + character.proficiency)
+                    : character.stats.mod(savesShort[i]) + character.proficiency
+            );
             if (saves.includes(character.savingThrows[i])) {
-                image.print(font, saveThrow[0] + 30, saveThrow[1] + tabSize * i, character.savingThrows);
-                image.print(
-                    font,
-                    saveThrow[0],
-                    saveThrow[1] + tabSize * i,
-                    "+"
-                );
+                image.print(font, saveThrow[0], saveThrow[1] + tabSize * i, "+");
             }
         }
+        let circle = new jimp(20, 20, "black").circle({ radius: 8.5, x: 9, y: 9 });
         for (let i = 0; i < skills.length; i++) {
             for (let j = 0; j < skills[i].length; j++) {
                 if (character.skills.includes(skills[i][j])) {
-                    image.print(
-                        font,
+                    image.composite(
+                        circle,
                         saveThrow[0],
-                        saveThrow[1] + tabSize * i + circleSize * j,
-                        "+"
+                        saveThrow[1] + tabSize * i + circleSize * (j + 1) + 8
                     );
+                    image.print(
+                        fontSmall,
+                        saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
+                        saveThrow[1] + tabSize * i + circleSize * j + 30,
+                        character.stats.mod(savesShort[i]) > 0
+                            ? "+" + (character.stats.mod(savesShort[i]) + character.proficiency)
+                            : character.stats.mod(savesShort[i]) + character.proficiency
+                    );
+                    continue;
                 }
+                image.print(
+                    fontSmall,
+                    saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
+                    saveThrow[1] + tabSize * i + circleSize * j + 30,
+                    character.stats.modString(savesShort[i])
+                );
             }
         }
 
@@ -225,6 +244,9 @@ export function generate(character: Character) {
         for (let i = 0; i < (character.saves.failures > 3 ? 3 : character.saves.failures); i++) {
             image.composite(saveCircle, 889.5 + 33 * i, 1029);
         }
+
+        image.print(fontTitle, 883, 1158, character.spellSaveDC);
+        image.print(fontTitle, 903, 1278, character.spellBonus)
 
         image.normalize();
         image.write("out.png");
