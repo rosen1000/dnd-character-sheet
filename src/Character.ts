@@ -161,6 +161,7 @@ export class Character {
     public treasure: string;
 
     // Spell handling
+    // https://oort.nz/dnd/wiki/spellcasting%20ability%20modifier.html
     public spellAbility: number;
     public get spellSaveDC(): number {
         return 8 + this.proficiency + this.stats.mod("int");

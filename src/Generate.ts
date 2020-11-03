@@ -4,12 +4,16 @@ import { join } from "path";
 import Jimp = require("jimp");
 import { GenerateSettings, StatShort } from "./@types";
 
+let fontTitle;
+let font;
+let fontSmall;
+
+jimp.loadFont(jimp.FONT_SANS_64_BLACK).then(f => fontTitle = f);
+jimp.loadFont(jimp.FONT_SANS_32_BLACK).then(f => font = f);
+jimp.loadFont(jimp.FONT_SANS_16_BLACK).then(f => fontSmall = f);
+
 export function generate(character: Character, settings: GenerateSettings = {}) {
     jimp.read(join(__dirname, "..", "template.png"), async (_, image) => {
-        const fontTitle = await jimp.loadFont(jimp.FONT_SANS_64_BLACK);
-        const font = await jimp.loadFont(jimp.FONT_SANS_32_BLACK);
-        const fontSmall = await jimp.loadFont(jimp.FONT_SANS_16_BLACK);
-
         // Top bar info 700 200
         image.print(fontTitle, 130, 145, character.name);
         image.print(font, 700, 128, character.class + " " + character.level);
@@ -60,151 +64,12 @@ export function generate(character: Character, settings: GenerateSettings = {}) 
             330,
             character.speed
         );
-
-        // Stat values
-        let height = 487;
-        image.print(
-            fontSmall,
-            165 - jimp.measureText(fontSmall, character.stats.strength.toString()) / 2,
-            height,
-            character.stats.strength
-        );
-        height += 176;
-        image.print(
-            fontSmall,
-            165 - jimp.measureText(fontSmall, character.stats.dexterity.toString()) / 2,
-            height,
-            character.stats.dexterity
-        );
-        height += 176;
-        image.print(
-            fontSmall,
-            165 - jimp.measureText(fontSmall, character.stats.constitution.toString()) / 2,
-            height,
-            character.stats.constitution
-        );
-        height += 176;
-        image.print(
-            fontSmall,
-            165 - jimp.measureText(fontSmall, character.stats.intelligence.toString()) / 2,
-            height,
-            character.stats.intelligence
-        );
-        height += 176;
-        image.print(
-            fontSmall,
-            165 - jimp.measureText(fontSmall, character.stats.wisdom.toString()) / 2,
-            height,
-            character.stats.wisdom
-        );
-        height += 176;
-        image.print(
-            fontSmall,
-            165 - jimp.measureText(fontSmall, character.stats.charisma.toString()) / 2,
-            height,
-            character.stats.charisma
-        );
-
-        // Stat mods
-        height = 535;
-        image.print(
-            font,
-            165 - jimp.measureText(font, character.stats.modString("str")) / 2,
-            height,
-            character.stats.modString("str")
-        );
-        height += 176;
-        image.print(
-            font,
-            165 - jimp.measureText(font, character.stats.modString("dex")) / 2,
-            height,
-            character.stats.modString("dex")
-        );
-        height += 176;
-        image.print(
-            font,
-            165 - jimp.measureText(font, character.stats.modString("con")) / 2,
-            height,
-            character.stats.modString("con")
-        );
-        height += 176;
-        image.print(
-            font,
-            165 - jimp.measureText(font, character.stats.modString("int")) / 2,
-            height,
-            character.stats.modString("int")
-        );
-        height += 176;
-        image.print(
-            font,
-            165 - jimp.measureText(font, character.stats.modString("wis")) / 2,
-            height,
-            character.stats.modString("wis")
-        );
-        height += 176;
-        image.print(
-            font,
-            165 - jimp.measureText(font, character.stats.modString("cha")) / 2,
-            height,
-            character.stats.modString("cha")
-        );
-        height += 176;
-
-        // Skills
-        let saves = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
-        let savesShort: Array<StatShort> = ["str", "dex", "con", "int", "wis", "cha"];
-        let skills = [
-            ["Athletics"],
-            ["Acrobatics", "Sleigth of Hand", "Stealth"],
-            [],
-            ["Arcana", "History", "Investigation", "Narture", "Religion"],
-            ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
-            ["Deception", "Intimidation", "Performance", "Persuation"],
-        ];
-        let saveThrow = [265.5, 474];
-        let tabSize = 650.5 - saveThrow[1];
-        let circleSize = 499 - saveThrow[1];
-        for (let i = 0; i < 6; i++) {
-            image.print(
-                fontSmall,
-                saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
-                saveThrow[1] + tabSize * i + 6,
-                character.stats.mod(savesShort[i]) > 0
-                    ? "+" + (character.stats.mod(savesShort[i]) + character.proficiency)
-                    : character.stats.mod(savesShort[i]) + character.proficiency
-            );
-            if (saves.includes(character.savingThrows[i])) {
-                image.print(font, saveThrow[0], saveThrow[1] + tabSize * i, "+");
-            }
-        }
-        let circle = new jimp(20, 20, "black").circle({ radius: 8.5, x: 9, y: 9 });
-        for (let i = 0; i < skills.length; i++) {
-            for (let j = 0; j < skills[i].length; j++) {
-                if (character.skills.includes(skills[i][j])) {
-                    image.composite(
-                        circle,
-                        saveThrow[0],
-                        saveThrow[1] + tabSize * i + circleSize * (j + 1) + 8
-                    );
-                    image.print(
-                        fontSmall,
-                        saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
-                        saveThrow[1] + tabSize * i + circleSize * j + 30,
-                        character.stats.mod(savesShort[i]) > 0
-                            ? "+" + (character.stats.mod(savesShort[i]) + character.proficiency)
-                            : character.stats.mod(savesShort[i]) + character.proficiency
-                    );
-                    continue;
-                }
-                image.print(
-                    fontSmall,
-                    saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
-                    saveThrow[1] + tabSize * i + circleSize * j + 30,
-                    character.stats.modString(savesShort[i])
-                );
-            }
-        }
-
+        
+        if (settings.showStats == undefined || settings.showStats) stats(image, character);
+        if (settings.showSkills == undefined || settings.showSkills) skills(image, character);
+        if (settings.showSkillMods == undefined || settings.showSkillMods)
+            skillMod(image, character);
+            
         // Passive wisdom
         image.print(
             font,
@@ -245,10 +110,164 @@ export function generate(character: Character, settings: GenerateSettings = {}) 
             image.composite(saveCircle, 889.5 + 33 * i, 1029);
         }
 
+        // Spells
         image.print(fontTitle, 883, 1158, character.spellSaveDC);
-        image.print(fontTitle, 903, 1278, character.spellBonus)
+        image.print(fontTitle, 903, 1278, character.spellBonus);
+        image.print(
+            fontTitle,
+            875 - jimp.measureText(fontTitle, character.stats.modString("cha")) / 2,
+            1413,
+            character.stats.modString("cha")
+        );
 
         image.normalize();
         image.write("out.png");
     });
+}
+
+function stats(image: Jimp, character: Character) {
+    let height = 487;
+    image.print(
+        fontSmall,
+        165 - jimp.measureText(fontSmall, character.stats.strength.toString()) / 2,
+        height,
+        character.stats.strength
+    );
+    height += 176;
+    image.print(
+        fontSmall,
+        165 - jimp.measureText(fontSmall, character.stats.dexterity.toString()) / 2,
+        height,
+        character.stats.dexterity
+    );
+    height += 176;
+    image.print(
+        fontSmall,
+        165 - jimp.measureText(fontSmall, character.stats.constitution.toString()) / 2,
+        height,
+        character.stats.constitution
+    );
+    height += 176;
+    image.print(
+        fontSmall,
+        165 - jimp.measureText(fontSmall, character.stats.intelligence.toString()) / 2,
+        height,
+        character.stats.intelligence
+    );
+    height += 176;
+    image.print(
+        fontSmall,
+        165 - jimp.measureText(fontSmall, character.stats.wisdom.toString()) / 2,
+        height,
+        character.stats.wisdom
+    );
+    height += 176;
+    image.print(
+        fontSmall,
+        165 - jimp.measureText(fontSmall, character.stats.charisma.toString()) / 2,
+        height,
+        character.stats.charisma
+    );
+}
+
+function skills(image: Jimp, character: Character) {
+    let height = 535;
+    image.print(
+        font,
+        165 - jimp.measureText(font, character.stats.modString("str")) / 2,
+        height,
+        character.stats.modString("str")
+    );
+    height += 176;
+    image.print(
+        font,
+        165 - jimp.measureText(font, character.stats.modString("dex")) / 2,
+        height,
+        character.stats.modString("dex")
+    );
+    height += 176;
+    image.print(
+        font,
+        165 - jimp.measureText(font, character.stats.modString("con")) / 2,
+        height,
+        character.stats.modString("con")
+    );
+    height += 176;
+    image.print(
+        font,
+        165 - jimp.measureText(font, character.stats.modString("int")) / 2,
+        height,
+        character.stats.modString("int")
+    );
+    height += 176;
+    image.print(
+        font,
+        165 - jimp.measureText(font, character.stats.modString("wis")) / 2,
+        height,
+        character.stats.modString("wis")
+    );
+    height += 176;
+    image.print(
+        font,
+        165 - jimp.measureText(font, character.stats.modString("cha")) / 2,
+        height,
+        character.stats.modString("cha")
+    );
+    height += 176;
+}
+
+function skillMod(image: Jimp, character: Character) {
+    let saves = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"];
+    let savesShort: Array<StatShort> = ["str", "dex", "con", "int", "wis", "cha"];
+    let skills = [
+        ["Athletics"],
+        ["Acrobatics", "Sleigth of Hand", "Stealth"],
+        [],
+        ["Arcana", "History", "Investigation", "Narture", "Religion"],
+        ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
+        ["Deception", "Intimidation", "Performance", "Persuation"],
+    ];
+    let saveThrow = [265.5, 474];
+    let tabSize = 650.5 - saveThrow[1];
+    let circleSize = 499 - saveThrow[1];
+    for (let i = 0; i < 6; i++) {
+        image.print(
+            fontSmall,
+            saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
+            saveThrow[1] + tabSize * i + 6,
+            character.stats.mod(savesShort[i]) > 0
+                ? "+" + (character.stats.mod(savesShort[i]) + character.proficiency)
+                : character.stats.mod(savesShort[i]) + character.proficiency
+        );
+        if (saves.includes(character.savingThrows[i])) {
+            image.print(font, saveThrow[0], saveThrow[1] + tabSize * i, "+");
+        }
+    }
+    let circle = new jimp(20, 20, "black").circle({ radius: 8.5, x: 9, y: 9 });
+    for (let i = 0; i < skills.length; i++) {
+        for (let j = 0; j < skills[i].length; j++) {
+            if (character.skills.includes(skills[i][j])) {
+                image.composite(
+                    circle,
+                    saveThrow[0],
+                    saveThrow[1] + tabSize * i + circleSize * (j + 1) + 8
+                );
+                image.print(
+                    fontSmall,
+                    saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
+                    saveThrow[1] + tabSize * i + circleSize * j + 30,
+                    character.stats.mod(savesShort[i]) > 0
+                        ? "+" + (character.stats.mod(savesShort[i]) + character.proficiency)
+                        : character.stats.mod(savesShort[i]) + character.proficiency
+                );
+                continue;
+            }
+            image.print(
+                fontSmall,
+                saveThrow[0] + 34 + (character.stats.mod(savesShort[i]) == 0 ? 3 : 0),
+                saveThrow[1] + tabSize * i + circleSize * j + 30,
+                character.stats.modString(savesShort[i])
+            );
+        }
+    }
 }

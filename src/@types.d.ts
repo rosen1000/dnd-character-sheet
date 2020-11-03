@@ -69,5 +69,18 @@ export type Background =
 export type StatShort = "str" | "dex" | "con" | "int" | "wis" | "cha";
 
 export class GenerateSettings {
-
+    showLevel?: boolean;
+    showStats?: boolean;
+    showSkills?: boolean;
+    showSkillMods?: boolean;
+    showAvatar?: boolean;
+    hitDiceLocation?: "up" | "down";
+    showDeathSaves?: boolean;
+    showHP?: boolean;
+    showSpellSlots?: boolean;
+    showProficiencies?: boolean;
+    showWeapons?: boolean;
+    showItems?: boolean;
+    showFeatures?: boolean;
+    showSpells?: boolean;
 }

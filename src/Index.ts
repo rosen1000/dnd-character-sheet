@@ -71,6 +71,7 @@ me.spells.push("Hex", "Toll the Dead"); // Spells lvl1
 me.spells.push("Crown of Madness"); // Spells lvl2
 me.spells.push("Remove Curse") // Spells lvl3
 me.spellSlots = 2;
+me.spellAbility = 12;
 
 generate(me);
 
